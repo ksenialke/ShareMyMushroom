@@ -34,13 +34,13 @@ var upload = require('express-fileupload');
 app.use(upload());
 
 //Generating a name for it
-function generatePassword(){
+function generateName(){
     var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    var password ='';
+    var word ='';
     for(var i = 0; i<10; i++){
-        password += chars.charAt(Math.random()*chars.length);
+        word += chars.charAt(Math.random()*chars.length);
     }
-    return password;
+    return word;
 }
 
 function getFileExtension(thing) {
@@ -52,7 +52,7 @@ app.post("/", function (req,res) {
     if(req.files){
         var file = req.files.filename,
             filename = file.name;
-        var newName = generatePassword()+'.'+getFileExtension(file);
+        var newName = generateName()+'.'+getFileExtension(file);
         file.mv("/Users/kseniaklamut/WebstormProjects/ShareMyMushroom/Uploads/"+newName,function (err) {
             if(err){
                 //if there's an error
