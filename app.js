@@ -15,8 +15,8 @@ const http = require('http');
 // __dirname is directory that contains the JavaScript source codenpm install nodemon --save-dev
 
 app.get('/', (req, res) => {
-    res.send("<html> <img src=\"/upload/grzyp.jpg\"/> </html>");
-    //res.sendFile(path.join(__dirname, '/index.html'));
+    //res.send("<html> <img src=\"/upload/grzyp.jpg\"/> </html>");
+    res.sendFile(path.join(__dirname, '/index.html'));
 });
 
 app.get('/javascript', (req, res) => {
@@ -31,14 +31,10 @@ app.get('/grzyb_upload', (req, res) => {
     res.sendFile(path.join(__dirname, '/grzyb_upload.html'));
 });
 
-
-
-
 // Creating the server where browsers can connect
 app.listen(5000, () => {
     console.log('App is starting at port', 5000)
 });
-
 
 //Image upload
 const upload = require('express-fileupload');
@@ -58,7 +54,6 @@ function generateName(){
 function getFileExtension(thing) {
     return thing.name.split('.').pop();
 }
-
 
 // Posting request
 app.post("/", function (req,res) {
@@ -83,16 +78,14 @@ app.post("/", function (req,res) {
             }
         });
     }});
-// otwieranie: ({{({  zamykanie: })}})
 
 // Array for List file names in the console
-const listOfFiles = [];
-const testFolder = '/Users/kseniaklamut/WebstormProjects/ShareMyMushroom/Uploads/';
-app.use('/upload', express.static(testFolder));
-
+const testFolder = './Uploads/';
+app.use('/upload', express.static(testFolder)); //
 
 // Creating a function to list all files in a directory
 function listFiles() {
+    const listOfFiles = [];
     // Variable with a string of all files
     const lst = fs.readdirSync(testFolder);
         lst.forEach( i => {
@@ -101,35 +94,24 @@ function listFiles() {
                 listOfFiles.push(i);
              }
         });
-    return listOfFiles
+    return listOfFiles;
 }
-
-const howManyFiles = listFiles().length;
-//console.log(howManyFiles)
-//console.log(listFiles().length); //To nie działa //A jednak tak
-//console.log(listOfFiles.length)
 
 // Creating a string with <img src> and all photos
 function manyImages() {
     var imgs ='';
-    for (var i = 0; i<howManyFiles; i++){
-        imgs = '<html><img src="/upload/'+listFiles()[i]+'"/></html> ';
-        // console.log(imgs);
+    for (var i = 0; i<listFiles().length; i++){
+        imgs += '<img src="/upload/'+listFiles()[i]+'"/><br>';
     }
-    return imgs
+    return '<html>'+imgs+'</html>';
 }
 
-//Upload specified photos at specified paths
-for (var i = 0; i<listFiles.length; i++){
-    app.use('/upload',listOfFiles[i], express.static('/Users/kseniaklamut/WebstormProjects/ShareMyMushroom/Uploads/'))
-}
 //Upload all photos at a specified path
 app.get('/gowno', (req, res) => {
     res.send(manyImages());
-    // console.log('<html><img src="/upload/'+listFiles()[1]+'"/></html>')
 });
 
-//Uploading a photo
+//Uploading a mushroom photo
 app.get('/grzyb_upload', (req, res) => {
     res.sendFile(path.join(__dirname, '/grzyb_upload.html'));
 });
@@ -138,3 +120,5 @@ app.get('/grzyb_upload', (req, res) => {
 app.get("*", (req, res) => {
     res.json('Page not found.');
 });
+
+console.log(listFiles().length)
