@@ -100,14 +100,15 @@ let listFiles = function() {
 // Creating a string with <img src> and all photos
 function manyImages() {
     var imgs ='';
-    for (var i = 0; i<listFiles().length; i++){
-        imgs += '<img src="/upload/'+listFiles()[i]+'"/><br>';
+    let files = listFiles()
+    for (var i = 0; i<files.length; i++){
+        imgs += '<img src="/upload/'+files[i]+'"/><br>';
     }
     return '<html>'+imgs+'</html>';
 }
 
 //Upload all photos at a specified path
-app.get('/gowno', (req, res) => {
+app.get('/uploaded', (req, res) => {
     res.send(manyImages());
 });
 
