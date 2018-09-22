@@ -84,7 +84,7 @@ const testFolder = './Uploads/';
 app.use('/upload', express.static(testFolder)); //
 
 // Creating a function to list all files in a directory
-function listFiles() {
+let listFiles = function() {
     const listOfFiles = [];
     // Variable with a string of all files
     const lst = fs.readdirSync(testFolder);
@@ -95,7 +95,7 @@ function listFiles() {
              }
         });
     return listOfFiles;
-}
+};
 
 // Creating a string with <img src> and all photos
 function manyImages() {
@@ -120,5 +120,3 @@ app.get('/grzyb_upload', (req, res) => {
 app.get("*", (req, res) => {
     res.json('Page not found.');
 });
-
-console.log(listFiles().length)
