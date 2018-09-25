@@ -134,7 +134,7 @@ function manyImages() {
 
     }
     sortImages();
-    for (var i = 0; i<sortImages().length; i++){ //files.length
+    for (var i = 0; i<files.length; i++){ //files.length
         imgs += '<img src="/upload/'+files[i]+'"/><br>';
     }
 
