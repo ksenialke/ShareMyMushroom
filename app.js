@@ -79,7 +79,6 @@ app.post("/", function (req,res) {
         });
     }});
 
-// Array for List file names in the console
 const testFolder = './Uploads/';
 app.use('/upload', express.static(testFolder)); //
 
@@ -88,6 +87,7 @@ let listFiles = function() {
     const listOfFiles = [];
     // Variable with a string of all files
     const lst = fs.readdirSync(testFolder);
+
         lst.forEach( i => {
             // Not adding .DS_Store file
             if ( i !=='.DS_Store'){
@@ -97,13 +97,47 @@ let listFiles = function() {
     return listOfFiles;
 };
 
-// Creating a string with <img src> and all photos
+
+// Sorting dates and Creating a string with <img src> and all photos
 function manyImages() {
     var imgs ='';
-    let files = listFiles()
-    for (var i = 0; i<files.length; i++){
+    let files = listFiles();
+    function sortImages(){
+        var d = [];
+        for (var i = 0; i<files.length; i++) {
+            date = new Date(fs.statSync('./Uploads/' + files[i]).mtime);
+            year = date.getFullYear();
+            month = date.getMonth()+1;
+            dt = date.getDate();
+            hour = date.getHours();
+
+            if (dt < 10) {
+                dt = '0' + dt;
+            }
+            if (month < 10) {
+                month = '0' + month;
+            }
+            if (hour < 10) {
+                hour = '0' + hour;
+            }
+            // d with dates, files with names
+            d.push(year+'-' + month + '-'+dt);
+        }
+
+        var date_sort_desc = function (date1, date2) {
+            if (date1 > date2) return -1;
+            if (date1 < date2) return 1;
+            return 0;
+        };
+
+        return(d.sort(date_sort_desc));
+
+    }
+    sortImages();
+    for (var i = 0; i<sortImages().length; i++){ //files.length
         imgs += '<img src="/upload/'+files[i]+'"/><br>';
     }
+
     return '<html>'+imgs+'</html>';
 }
 
