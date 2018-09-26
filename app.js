@@ -102,42 +102,25 @@ let listFiles = function() {
 function manyImages() {
     var imgs ='';
     let files = listFiles();
-    function sortImages(){
-        var d = [];
-        for (var i = 0; i<files.length; i++) {
-            date = new Date(fs.statSync('./Uploads/' + files[i]).mtime);
-            year = date.getFullYear();
-            month = date.getMonth()+1;
-            dt = date.getDate();
-            hour = date.getHours();
-
-            if (dt < 10) {
-                dt = '0' + dt;
-            }
-            if (month < 10) {
-                month = '0' + month;
-            }
-            if (hour < 10) {
-                hour = '0' + hour;
-            }
-            // d with dates, files with names
-            d.push(year+'-' + month + '-'+dt);
-        }
-
-        var date_sort_desc = function (date1, date2) {
-            if (date1 > date2) return -1;
-            if (date1 < date2) return 1;
-            return 0;
-        };
-
-        return(d.sort(date_sort_desc));
-
+    var d = [];
+    for (let i = 0; i<files.length; i++) { //Dla wszystkich plikow wylistowanych z katalogu
+        date = new Date(fs.statSync('./Uploads/' + files[i]).mtime); // biore mtime i wrzucam do daty => Object key
+        var name = files[i]; // Object value
+        var e = {}; //Robie obiekt na daty:nazwy
+        e.date = date; //Key date = mtime każdego pliku po kolei
+        e.name = name; // Value name = nazwa każdego pliku po kolei
+        d.push(e); //Wrzucam całą parę do listy
     }
-    sortImages();
-    for (var i = 0; i<files.length; i++){ //files.length
-        imgs += '<img src="/upload/'+files[i]+'"/><br>';
-    }
+    var date_sort_desc = function (e1, e2) {
+        if (e1.date > e2.date) return -1;
+        if (e1.date < e2.date) return 1;
+        return 0;
+    };
+    var sorted = d.sort(date_sort_desc); //Posortowane datami obiekty w liście
 
+    for (let i = 0; i<files.length; i++){ //files.length
+        imgs += '<img src="/upload/'+sorted[i].name+'"/><br>';
+    }
     return '<html>'+imgs+'</html>';
 }
 
