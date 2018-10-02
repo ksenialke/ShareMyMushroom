@@ -55,28 +55,35 @@ function getFileExtension(thing) {
     return thing.name.split('.').pop();
 }
 
+
+
 // Posting request
 app.post("/", function (req,res) {
     //When file is uploaded
     if(req.files){
-        // console.log(req.files);
         // Extracting file's name
         const file = req.files.filename,
             filename = file.name;
-        // Naming it
-        const newName = generateName()+'.'+getFileExtension(file);
-        // Using the mv() method to place the file somewhere on your server (first arg = path, second = callback function
-        file.mv("/Users/kseniaklamut/WebstormProjects/ShareMyMushroom/Uploads/"+newName,function (err) {
-            if(err){
-                // If there's an error
-                console.log(err);
-                res.send('Error occured');
-            }
-            else{
-                // If it works
-                res.send('Done!');
-            }
-        });
+        // Validating the type
+        if((file.mimetype) =='image/jpeg' || (file.mimetype) =='image/png'){
+            // Naming it
+            const newName = generateName()+'.'+getFileExtension(file);
+            // Using the mv() method to place the file somewhere on your server (first arg = path, second = callback function
+            file.mv("/Users/kseniaklamut/WebstormProjects/ShareMyMushroom/Uploads/"+newName,function (err) {
+                if(err){
+                    // If there's an error
+                    console.log(err);
+                    res.send('Error occured');
+                }
+                else{
+                    // If it works
+                    res.send('Done!');
+                }
+            });
+        }
+        else{
+            res.sendFile(path.join(__dirname, '/otherFiles.html'));
+        }
     }});
 
 const testFolder = './Uploads/';
@@ -96,7 +103,6 @@ let listFiles = function() {
         });
     return listOfFiles;
 };
-
 
 // Sorting dates and Creating a string with <img src> and all photos
 function manyImages() {
@@ -123,6 +129,7 @@ function manyImages() {
     }
     return '<html>'+imgs+'</html>';
 }
+
 
 //Upload all photos at a specified path
 app.get('/uploaded', (req, res) => {
