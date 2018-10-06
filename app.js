@@ -8,6 +8,17 @@ const fs = require('fs');
 // To use HTTP and client
 const http = require('http');
 
+const testFolder = './Uploads/';
+
+//EJS
+var bodyParser = require('body-parser');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+app.use('/upload', express.static(testFolder)); //
+
+app.use( express.static( testFolder ) );
+
 // Routes
 // app.get(path, callback)
 // The first argument (path) is anything that comes after the domain
@@ -55,8 +66,6 @@ function getFileExtension(thing) {
     return thing.name.split('.').pop();
 }
 
-
-
 // Posting request
 app.post("/", function (req,res) {
     //When file is uploaded
@@ -68,7 +77,7 @@ app.post("/", function (req,res) {
         if((file.mimetype) =='image/jpeg' || (file.mimetype) =='image/png'){
             // Naming it
             const newName = generateName()+'.'+getFileExtension(file);
-            // Using the mv() method to place the file somewhere on your server (first arg = path, second = callback function
+            // Using the mv() method to place the file somewhere on your server (first arg = path, second = callback function)
             file.mv("/Users/kseniaklamut/WebstormProjects/ShareMyMushroom/Uploads/"+newName,function (err) {
                 if(err){
                     // If there's an error
@@ -86,15 +95,11 @@ app.post("/", function (req,res) {
         }
     }});
 
-const testFolder = './Uploads/';
-app.use('/upload', express.static(testFolder)); //
-
 // Creating a function to list all files in a directory
 let listFiles = function() {
     const listOfFiles = [];
     // Variable with a string of all files
     const lst = fs.readdirSync(testFolder);
-
         lst.forEach( i => {
             // Not adding .DS_Store file
             if ( i !=='.DS_Store'){
@@ -106,7 +111,7 @@ let listFiles = function() {
 
 // Sorting dates and Creating a string with <img src> and all photos
 function manyImages() {
-    var imgs ='';
+    var imgs =[];
     let files = listFiles();
     var d = [];
     for (let i = 0; i<files.length; i++) { //Dla wszystkich plikow wylistowanych z katalogu
@@ -124,16 +129,23 @@ function manyImages() {
     };
     var sorted = d.sort(date_sort_desc); //Posortowane datami obiekty w liście
 
+    var obj;
     for (let i = 0; i<files.length; i++){ //files.length
-        imgs += '<img src="/upload/'+sorted[i].name+'"/><br>';
+        obj = new Object();
+        obj.name = sorted[i].name
+        imgs.push(obj)
     }
-    return '<html>'+imgs+'</html>';
+    return imgs;
 }
 
+var c = manyImages();
 
-//Upload all photos at a specified path
+//Upload all photos at a specified path with EJS template
 app.get('/uploaded', (req, res) => {
-    res.send(manyImages());
+    async: true
+    res.render('uploaded', {
+        photos: c
+    });
 });
 
 //Uploading a mushroom photo
