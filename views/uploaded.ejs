@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MUSHROOMZZ</title>
+    <link rel="stylesheet" type="text/css" href="/css"/>
+</head>
+<body>
+
+<header>
+<h2>Uploaded Grzyby:</h2>
+</header>
+
+    <ul>
+        <% for (var image of photos) {%>
+        <li type="1">
+            <img src="<%= image.name %>" />
+
+        </li>
+        <%}%>
+    </ul>
+
+</body>
+</html>
