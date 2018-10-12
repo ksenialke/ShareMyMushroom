@@ -11,13 +11,12 @@ const http = require('http');
 const testFolder = './Uploads/';
 
 //EJS
-var bodyParser = require('body-parser');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use('/upload', express.static(testFolder)); //
-
-app.use( express.static( testFolder ) );
+app.use('/upload', express.static(testFolder)); // viewing pics at ../upload/name+extension
+app.use( express.static( testFolder ) ); //nwm jak usunąć
+app.use( express.static( __dirname ) ); //nwm czemu nie działa
 
 // Routes
 // app.get(path, callback)
@@ -26,7 +25,6 @@ app.use( express.static( testFolder ) );
 // __dirname is directory that contains the JavaScript source codenpm install nodemon --save-dev
 
 app.get('/', (req, res) => {
-    //res.send("<html> <img src=\"/upload/grzyp.jpg\"/> </html>");
     res.sendFile(path.join(__dirname, '/index.html'));
 });
 
@@ -97,16 +95,10 @@ app.post("/", function (req,res) {
 
 // Creating a function to list all files in a directory
 let listFiles = function() {
-    const listOfFiles = [];
-    // Variable with a string of all files
-    const lst = fs.readdirSync(testFolder);
-        lst.forEach( i => {
-            // Not adding .DS_Store file
-            if ( i !=='.DS_Store'){
-                listOfFiles.push(i);
-             }
-        });
-    return listOfFiles;
+    const lst = fs.readdirSync(testFolder).filter((elem)=>{
+        return elem !== '.DS_Store';
+    });
+    return lst;
 };
 
 // Sorting dates and Creating a string with <img src> and all photos
@@ -138,11 +130,9 @@ function manyImages() {
     return imgs;
 }
 
-var c = manyImages();
-
 //Upload all photos at a specified path with EJS template
 app.get('/uploaded', (req, res) => {
-    async: true
+    var c = manyImages();
     res.render('uploaded', {
         photos: c
     });
