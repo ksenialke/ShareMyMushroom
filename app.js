@@ -15,8 +15,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use('/upload', express.static(testFolder)); // viewing pics at ../upload/name+extension
-app.use( express.static( testFolder ) ); //nwm jak usunąć
-app.use( express.static( __dirname ) ); //nwm czemu nie działa
+app.use( '/css', express.static( './css' ) );
 
 // Routes
 // app.get(path, callback)
@@ -26,14 +25,6 @@ app.use( express.static( __dirname ) ); //nwm czemu nie działa
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));
-});
-
-app.get('/javascript', (req, res) => {
-    res.sendFile(path.join(__dirname, '/app.js'));
-});
-
-app.get('/css', (req, res) => {
-    res.sendFile(path.join(__dirname, '/style.css'));
 });
 
 app.get('/grzyb_upload', (req, res) => {
