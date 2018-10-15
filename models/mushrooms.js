@@ -12,8 +12,4 @@ const MushroomSchema = new Schema({
 // Every time someone creates a new Mushroom mongoose is gonna place it in mushrooms collection and base it on MushroomSchema
 const Mushroom = mongoose.model('mushrooms', MushroomSchema);
 
-var xd = new Mushroom({nick:"Ksenia", filename: 'iksde.jpg', upload_date: new Date('2018-10-15T03:24:00')})
-exports.sayHelloInSpanish = function() {
-    return "Hola";
-};
 module.exports = Mushroom;
