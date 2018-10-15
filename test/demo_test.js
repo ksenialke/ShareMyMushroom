@@ -1,11 +1,23 @@
 // Describe tests
 const assert = require('assert');
+const Mushroom = ('../models/mushrooms.js');
 
-describe('some demo test', function () {
+describe('Saving records', function () {
 
     // Create tests
-    it('adds two numbers together', function () {
-        assert( 2 + 3 === 5 );
+    it('Saves a record to the database', function (done) {
+
+        var char = new Mushroom({
+            nick: 'Ksenia',
+            filename: 'unicorn.jpg'
+        });
+
+        // saving to the database and to mushrooms collection
+        // asynchroniczne, dodajemy promise .then()
+        char.save().then( function() {
+            assert(char.isNew === false); // true or false. False, ponieważ nie jest nowy - jest zapisany
+            done();
+        });
     })
 
 });
