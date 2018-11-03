@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Grzyb Upload</title>
-    <link rel="stylesheet" type="text/css" href="/css"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
 </head>
 <body>
 <form ref='uploadForm'
@@ -11,6 +11,7 @@
       action='/'
       method='post'
       encType="multipart/form-data">
+    <input type="text" name="nick" />
     <input type="file" name="filename" />
     <input type='submit' value='Upload!' />
 </form>

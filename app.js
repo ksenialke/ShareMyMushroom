@@ -8,7 +8,32 @@ const fs = require('fs');
 // To use HTTP and client
 const http = require('http');
 
+// Database
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/test',{ useNewUrlParser: true });
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:')); // for every error that occurs .ON
+db.once('open', function() { // doing this only once .ONCE
+    // we're connected!
+    console.log('Hello')
+});
+
 const testFolder = './Uploads/';
+
+// const mushrooms = require('./models/mushrooms.js');
+
+const Schema = mongoose.Schema;
+// Create Schema with properties and data types
+const MushroomSchema = new Schema({
+    nick: String,
+    filename: String,
+    upload_date: Date
+});
+
+// Create Model
+// Every time someone creates a new Mushroom mongoose is gonna place it in mushrooms collection and base it on MushroomSchema
+var Mushroom = mongoose.model('Mushroom', MushroomSchema);
+
 
 //EJS
 app.set('views', path.join(__dirname, 'views'));
@@ -67,7 +92,7 @@ app.post("/", function (req,res) {
             // Naming it
             const newName = generateName()+'.'+getFileExtension(file);
             // Using the mv() method to place the file somewhere on your server (first arg = path, second = callback function)
-            file.mv("/Users/kseniaklamut/WebstormProjects/ShareMyMushroom/Uploads/"+newName,function (err) {
+            file.mv("./Uploads/"+newName,function (err) {
                 if(err){
                     // If there's an error
                     console.log(err);
@@ -75,7 +100,12 @@ app.post("/", function (req,res) {
                 }
                 else{
                     // If it works
-                    res.send('Done!');
+                    var newMushroom = new Mushroom({nick: req.param('nick', 'Anonymous') || 'Anonymous', filename: newName, upload_date: new Date()});
+                    newMushroom.save(function (err) {
+                        if(err) throw new Error("Couldn't add mushroom to database.");
+                    });
+                    res.red irect('/uploaded')
+
                 }
             });
         }
@@ -85,45 +115,27 @@ app.post("/", function (req,res) {
     }});
 
 // Creating a function to list all files in a directory
-let listFiles = function() {
-    const lst = fs.readdirSync(testFolder).filter((elem)=>{
-        return elem !== '.DS_Store';
-    });
-    return lst;
+let listFiles = async function() {
+    var mushrooms = await Mushroom.find({}, null).exec();
+    return mushrooms;
 };
 
 // Sorting dates and Creating a string with <img src> and all photos
-function manyImages() {
-    var imgs =[];
-    let files = listFiles();
-    var d = [];
-    for (let i = 0; i<files.length; i++) { //Dla wszystkich plikow wylistowanych z katalogu
-        date = new Date(fs.statSync('./Uploads/' + files[i]).mtime); // biore mtime i wrzucam do daty => Object key
-        var name = files[i]; // Object value
-        var e = {}; //Robie obiekt na daty:nazwy
-        e.date = date; //Key date = mtime każdego pliku po kolei
-        e.name = name; // Value name = nazwa każdego pliku po kolei
-        d.push(e); //Wrzucam całą parę do listy
-    }
+async function manyImages() {
+    let files = await listFiles();
+
     var date_sort_desc = function (e1, e2) {
-        if (e1.date > e2.date) return -1;
-        if (e1.date < e2.date) return 1;
+        if (e1.upload_date > e2.upload_date) return -1;
+        if (e1.upload_date < e2.upload_date) return 1;
         return 0;
     };
-    var sorted = d.sort(date_sort_desc); //Posortowane datami obiekty w liście
-
-    var obj;
-    for (let i = 0; i<files.length; i++){ //files.length
-        obj = new Object();
-        obj.name = sorted[i].name
-        imgs.push(obj)
-    }
-    return imgs;
+    var sorted = files.sort(date_sort_desc); //Posortowane datami obiekty w liście
+    return sorted;
 }
 
 //Upload all photos at a specified path with EJS template
-app.get('/uploaded', (req, res) => {
-    var c = manyImages();
+app.get('/uploaded', async (req, res) => {
+    var c = await manyImages();
     res.render('uploaded', {
         photos: c
     });

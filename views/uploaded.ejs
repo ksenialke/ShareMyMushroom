@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>MUSHROOMZZ</title>
-    <link rel="stylesheet" type="text/css" href="/css"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
 </head>
 <body>
 
 <header>
-<h2>Uploaded Grzyby:</h2>
+    <h2>Uploaded Grzyby:</h2>
 </header>
 
-    <ul>
-        <% for (var image of photos) {%>
+<ul>
+    <% for (var image of photos) {%>
         <li type="1">
-            <img src="<%= image.name %>" />
+            <p>Upload Date: <%= new Date(image.upload_date).toLocaleString() %></p>
+            <p>Author: <%= image.nick %></p>
+             <img src=/upload/<%= image.filename %> />
         </li>
-        <%}%>
-    </ul>
+    <%}%>
+</ul>
 
 </body>
 </html>
