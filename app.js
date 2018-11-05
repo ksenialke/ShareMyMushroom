@@ -104,7 +104,7 @@ app.post("/", function (req,res) {
                     newMushroom.save(function (err) {
                         if(err) throw new Error("Couldn't add mushroom to database.");
                     });
-                    res.red irect('/uploaded')
+                    res.redirect('/uploaded')
 
                 }
             });
